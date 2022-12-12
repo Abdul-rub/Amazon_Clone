@@ -1,10 +1,17 @@
 
 import './App.css';
+import Navbar from "./component/header/navbar";
+import MainComp from './component/home/MainComp';
+import Newnav from './component/newNav/Newnav';
+
+
 
 function App() {
   return (
     <div className="App">
-     <h1>Abdul Rub</h1>
+     <Navbar/>
+     <Newnav/>
+     <MainComp/>
     </div>
   );
 }
