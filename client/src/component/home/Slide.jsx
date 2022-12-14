@@ -3,6 +3,7 @@ import React from 'react'
 import Carousel from 'react-material-ui-carousel'
 import "react-multi-carousel/lib/styles.css";
 import {products} from "./data"
+import "./slide.css"
 
 const responsive = {
     desktop: {
@@ -19,11 +20,11 @@ const responsive = {
     }
 };
 
-const Slide = () => {
+const Slide = ({title}) => {
   return (
     <div className='products_section'>
         <div className="products_deal">
-            <h3>Deal Of The Day</h3>
+            <h3>{title}</h3>
             <button className="view_btn">View All</button>
         </div>
         <Divider/>
@@ -49,7 +50,7 @@ const Slide = () => {
                                         <img src={e.url} alt="product" />
                                     </div>
                                     <p className="products_name">{e.title.shortTitle}</p>
-                                    <p className="products_offer" style={{ color: "#  007185" }}>{e.discount}</p>
+                                    <p className="products_offer">{e.discount}</p>
                                     <p className="products_explore">{e.tagline}</p>
                                 </div>
                 )
