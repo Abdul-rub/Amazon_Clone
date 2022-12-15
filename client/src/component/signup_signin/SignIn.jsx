@@ -1,20 +1,17 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
-// import { Logincontext } from '../context/Contextprovider';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const Sign_in = () => {
-
-    // const { account, setAccount } = useContext(Logincontext);
-
     const [signindata, setSignInData] = useState({
         email: "",
         password: ""
     });
 
-    // // console.log(data);
+    console.log(signindata);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
