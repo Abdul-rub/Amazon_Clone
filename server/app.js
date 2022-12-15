@@ -1,9 +1,51 @@
-require("dotenv").config()
+const cors = require("cors")
+const connection = require("./Config/db")
 const express = require("express")
+
+
+const Products = require("./Models/productSchema")
+
+const DefaultData = require("./defaultdata")
+
+require("dotenv").config()
 const app = express()
+const router= require("./Routes/router");
 
-const port = 8005;
+app.use(express.json());
+app.use(cors());
+app.use(router);
 
-app.listen(port,()=>{
-    console.log(`Server is running on port ${port}`)
+
+
+app.get("/",(req,res)=>{
+    res.send("Welcome to Homepage")
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Connection 
+
+app.listen(process.env.PORT || 8080, async(req,res)=>{
+    try {
+        await connection;
+    console.log("connection successfull");
+    } catch (error) {
+        console.log("connection to database failed")
+        console.log(error)
+    }
+    console.log(`listening on port ${process.env.PORT}`)
+})
+
+// DefaultData()
