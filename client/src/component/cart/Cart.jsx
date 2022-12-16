@@ -1,13 +1,45 @@
 import React from 'react'
 import "./cart.css"
 import { Divider } from '@mui/material';
+import {useParams} from "react-router-dom"
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const Cart = () => {
+  
+    const {id} = useParams()
+    // console.log(id)
+    const [gdata,setGData] = useState([])
+    console.log(gdata)
+
+    const getSpecData= async()=>{
+     const res = await fetch(`http://localhost:8000/products/${id}`,{
+        method:"GET",
+        headers:{
+            "Content-Type":"application/json"
+        }
+     })
+     const data = await res.json();
+      console.log(data)
+
+     if(res.status!==201){
+        console.log("No Data Found")
+     }
+     else{
+        // console.log("data")
+         setGData(data)
+     }
+    }
+
+    useEffect(()=>{
+        getSpecData()
+    },[id])
+
   return (
     <div className='cart_section'>
         <div className="cart_container">
             <div className="left_cart">
-                <img src="https://rukminim1.flixcart.com/image/150/150/kohigsw0/resistance-tube/c/s/e/new-adjustable-single-resistance-tube-multicolor-na-ajro-deal-original-imag2xg88mhmwxz5.jpeg?q=70" alt="item_image" />
+                <img src={gdata.url} alt="item_image" />
                 <div className="cart_btn">
                     <button className='cart_btn1'>Add To Cart</button>
                     <button className='cart_btn2'>Buy Now</button>
@@ -17,7 +49,7 @@ const Cart = () => {
             <h3>Fitness Gear</h3>
                         <h4>Kettly</h4>
                         <Divider />
-                        <p className="mrp">M.R.P. : $200</p>
+                        <p className="mrp">{gdata.mrp}</p>
                         <p>Deal of the Day : <span style={{ color: "#B12704" }}>₹455.00</span></p>
                         <p>You save : <span style={{ color: "#B12704" }}> ₹567(45%) </span></p>
 
