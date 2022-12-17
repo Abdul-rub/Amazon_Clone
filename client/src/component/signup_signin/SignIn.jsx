@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
 
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -11,14 +11,47 @@ const Sign_in = () => {
         password: ""
     });
 
-    console.log(signindata);
+    // console.log(signindata);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setSignInData({...signindata,[name]:value});
-        console.log(name,value);
+        // console.log(name,value);
     };
 
+    const handleSubmit=async(e)=>{
+        e.preventDefault()
+        const {email,password}= signindata
+        const res = await fetch(`http://localhost:8000/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({email, password}),
+          })
+
+          const data = await res.json();
+          console.log(data);
+
+          if (res.status === 400 || !data) {
+            toast.warning("Something went wrong", {
+              position: "top-center",
+            });
+          } else {
+            toast.success("Login Successfully", {
+              position: "top-center",
+            });
+            setSignInData({
+              ...signindata,
+              fname: "",
+              email: "",
+              mobile: "",
+              password: "",
+              cpassword: "",
+            });
+          }
+
+    }
 
   
 
@@ -29,7 +62,7 @@ const Sign_in = () => {
                     <img src="./blacklogoamazon.png" alt="signupimg" />
                 </div>
                 <div className="sign_form">
-                    <form>
+                    <form method='POST'>
                         <h1>Sign-In</h1>
 
                         <div className="form_data">
@@ -47,7 +80,7 @@ const Sign_in = () => {
                                 id="password" placeholder="At least 6 characters" />
                         </div>
                         <button type="submit" className="signin_btn" 
-                        // onClick={handleSubmit}
+                        onClick={handleSubmit}
                         >Continue</button>
                     </form>
                     <ToastContainer />
