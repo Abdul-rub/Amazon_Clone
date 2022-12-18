@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = new express.Router();
+const jwt = require("jsonwebtoken")
 const userModel = require("../Models/userSchema.js");
 
 const Products = require("../Models/productSchema");
@@ -79,16 +80,28 @@ router.post("/register", async (req, res) => {
 router.post("/login",async(req,res)=>{
     const {email,password}= req.body;
 
+
     if(!email || !password){
         res.status(400).json({error:"Fill the data"})
     };
     try {
         const userlogin = await userModel.findOne({email:email})
+        const user_id = userlogin._id 
         if(userlogin){
             const isMatch = await bcrypt.compare(password,userlogin.password)
-            console.log(isMatch)
-
-            if(!isMatch){
+            // console.log(isMatch)
+            // pdate({name: "John"}, {$push: {friends: {firstName: "Harry", lastName: "Potter"}}})
+            //Token Generate
+             if(isMatch){
+              const token = jwt.sign({user_id},process.env.SECRET_KEY);
+              let obj={token};
+              userModel.token.push(obj);
+              userModel.save(done);
+              // await userModel.update({email},{$push:{token:{token:token}}},done)
+              res.send({msg:"login Successfull" , token })
+              return token
+             }
+             else if(!isMatch){
                 res.status(400).json({error:"Invalid Details"})
             }else{
                 res.status(201).json({message:"password match"})
