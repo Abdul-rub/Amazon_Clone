@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = new express.Router();
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const userModel = require("../Models/userSchema.js");
 
 const Products = require("../Models/productSchema");
@@ -58,9 +58,9 @@ router.post("/register", async (req, res) => {
         email,
         mobile,
         password: hash,
-        cpassword: hash
+        cpassword: hash,
       });
-    
+
       try {
         await finalUser.save();
         console.log(finalUser);
@@ -73,53 +73,52 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
-
 //LOGIN
 
-router.post("/login",async(req,res)=>{
-    const {email,password}= req.body;
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-
-    if(!email || !password){
-        res.status(400).json({error:"Fill the data"})
-    };
-    try {
-        const userlogin = await userModel.findOne({email:email})
-        const user_id = userlogin._id 
-        if(userlogin){
-            const isMatch = await bcrypt.compare(password,userlogin.password)
-            // console.log(isMatch)
-            // pdate({name: "John"}, {$push: {friends: {firstName: "Harry", lastName: "Potter"}}})
-            //Token Generate
-             if(isMatch){
-              const token = jwt.sign({user_id},process.env.SECRET_KEY);
-              let obj={token};
-              userModel.token.push(obj);
-              userModel.save(done);
-              // await userModel.update({email},{$push:{token:{token:token}}},done)
-              res.send({msg:"login Successfull" , token })
-              return token
-             }
-             else if(!isMatch){
-                res.status(400).json({error:"Invalid Details"})
-            }else{
-                res.status(201).json({message:"password match"})
-            }
+  if (!email || !password) {
+    res.status(400).json({ error: "Fill the data" });
+  }
+  try {
+    const userlogin = await userModel.findOne({ email: email });
+    const user_id = userlogin._id;
+    if (userlogin) {
+      bcrypt.compare(password, userlogin.password).then(async function (result) {
+        if (result) {
+          const token = jwt.sign({ user_id }, process.env.SECRET_KEY);
+          await userModel.updateOne(
+            { email },
+            { $set: { token: { token: token } } },
+          );
+          return res.send({ msg: "login Successfull", token });
+        } else {
+          return res.status(400).json({ error: "Invalid Details" });
         }
-    } catch (error) {
-        res.status(400).json({error:"Invalid Details"})
+      });
     }
-})
-
-
-
-
-
-
-
-
-
-
+    // const isMatch = await bcrypt.compare(password, userlogin.password);
+    // console.log(isMatch)
+    // pdate({name: "John"}, {$push: {friends: {firstName: "Harry", lastName: "Potter"}}})
+    //Token Generate
+    //   if (isMatch) {
+    //     const token = jwt.sign({ user_id }, process.env.SECRET_KEY);
+    //     //   let obj={token};
+    //     //  userModel.token.push(obj);
+    //     //  await userModel.save(done);
+    //     // await userModel.update({email},{$push:{token:{token:token}}},done)
+    //     res.send({ msg: "login Successfull", token });
+    //     return token;
+    //   } else if (!isMatch) {
+    //     res.status(400).json({ error: "Invalid Details" });
+    //   } else {
+    //     res.status(201).json({ message: "password match" });
+    //   }
+    // }
+  } catch (error) {
+    res.status(400).json({ error: "Invalid Details" });
+  }
+});
 
 module.exports = router;
