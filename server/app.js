@@ -1,11 +1,11 @@
 const cors = require("cors")
 const connection = require("./Config/db")
 const express = require("express")
-
+const cookie = require("cookie")
 
 const Products = require("./Models/productSchema")
 
-const DefaultData = require("./defaultdata")
+// const DefaultData = require("./defaultdata")
 
 require("dotenv").config()
 const app = express()
@@ -14,6 +14,7 @@ const router= require("./Routes/router");
 app.use(express.json());
 app.use(cors());
 app.use(router);
+
 
 
 

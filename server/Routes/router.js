@@ -3,8 +3,10 @@ const bcrypt = require("bcryptjs");
 const router = new express.Router();
 const jwt = require("jsonwebtoken");
 const userModel = require("../Models/userSchema.js");
-
+const cookie = require("cookie")
+const authenicate = require("../Middleware/Authenticate")
 const Products = require("../Models/productSchema");
+
 
 //GET PRODUCTS
 router.get("/products", async (req, res) => {
@@ -88,10 +90,17 @@ router.post("/login", async (req, res) => {
       bcrypt.compare(password, userlogin.password).then(async function (result) {
         if (result) {
           const token = jwt.sign({ user_id }, process.env.SECRET_KEY);
+
           await userModel.updateOne(
             { email },
             { $set: { token: { token: token } } },
-          );
+          )
+          //SET COOKIES
+          res.setHeader('Set-Cookie', cookie.serialize('Amazoncookie', token, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 7 
+          }));
+          res.setHeader('Location', req.headers.referer || '/');
           return res.send({ msg: "login Successfull", token });
         } else {
           return res.status(400).json({ error: "Invalid Details" });
@@ -120,5 +129,36 @@ router.post("/login", async (req, res) => {
     res.status(400).json({ error: "Invalid Details" });
   }
 });
+
+
+
+//ADDING DATA TO CART
+
+router.post("/addcart/:id",authenicate, async(req,res)=>{
+  try {
+    const {id} = req.params
+    const cart = await Products.findOne({id:id});
+    console.log(cart)
+ 
+    const UserContact = await userModel.findOne({_id:req.userID})
+  //  console.log(UserContact)
+  if(UserContact){
+    const cartData = await UserContact.updateOne(
+      { email },
+      { $set: { carts: { carts:cart } } },
+    )
+    await UserContact.save();
+    console.log(cartData)
+    res.status(201).json(UserContact)
+  }else{
+    res.status(401).json({error:"Invalid User"})
+  }
+
+  } catch (error) {
+    res.status(401).json({error:"Invalid User"})
+  }
+})
+
+
 
 module.exports = router;
