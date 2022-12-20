@@ -33,6 +33,29 @@ const Cart = () => {
     getSpecData();
   }, []);
 
+   //Add t ocart function
+   const handleAddtoCart =  async(id)=>{
+    const checkRes = await fetch(`/addcart/${id}`,{
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        gdata
+      }),
+      credentials:"include"
+    });
+    const data1 = await checkRes.json()
+    console.log(data1+ "frontend data");
+    if(checkRes.status ==401 || data1){
+      console.log("User Invalid")
+      alert("User Invalid")
+    }else{
+      alert("data added in cart")
+    }
+   }
+
   return (
     <div className="cart_section">
       {gdata && Object.keys(gdata).length && (
@@ -40,7 +63,7 @@ const Cart = () => {
           <div className="left_cart">
             <img src={gdata.url} alt="item_image" />
             <div className="cart_btn">
-              <button className="cart_btn1">Add To Cart</button>
+              <button className="cart_btn1" onClick={()=>handleAddtoCart}>Add To Cart</button>
               <button className="cart_btn2">Buy Now</button>
             </div>
           </div>
