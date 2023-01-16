@@ -1,11 +1,14 @@
 import React from "react";
 import "./cart.css";
 import { Divider } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
+import {useDispatch} from "react-redux"
 
 const Cart = () => {
+  const dispatch = useDispatch()
+  const navigate= useNavigate()
   const { id } = useParams();
   // console.log(id)
   const [gdata, setGData] = useState([]);
@@ -34,27 +37,31 @@ const Cart = () => {
   }, []);
 
    //Add t ocart function
-   const handleAddtoCart =  async(id)=>{
-    const checkRes = await fetch(`/addcart/${id}`,{
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify({
-        gdata
-      }),
-      credentials:"include"
-    });
-    const data1 = await checkRes.json()
-    console.log(data1+ "frontend data");
-    if(checkRes.status ==401 || data1){
-      console.log("User Invalid")
-      alert("User Invalid")
-    }else{
-      alert("data added in cart")
-    }
+  //  const handleAddtoCart =  async(id)=>{
+  //   const checkRes = await fetch(`http://localhost:8000/addcart/${id}`,{
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body:JSON.stringify({
+  //       gdata}),
+  //     credentials:"include"
+  //   });
+  //   const data1 = await checkRes.json()
+  //   console.log(data1+ "frontend data");
+  //   if(checkRes.status ==401 || data1){
+  //     console.log("User Invalid")
+  //     alert("User Invalid")
+  //   }else{
+  //     alert("data added in cart")
+  //   }
+  //  }
+
+   const handleAddtoCart=()=>{
+       navigate('/cart')
    }
+
 
   return (
     <div className="cart_section">
@@ -63,7 +70,7 @@ const Cart = () => {
           <div className="left_cart">
             <img src={gdata.url} alt="item_image" />
             <div className="cart_btn">
-              <button className="cart_btn1" onClick={()=>handleAddtoCart}>Add To Cart</button>
+              <button className="cart_btn1" onClick={handleAddtoCart}>Add To Cart</button>
               <button className="cart_btn2">Buy Now</button>
             </div>
           </div>

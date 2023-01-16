@@ -1,9 +1,9 @@
 const cors = require("cors")
 const connection = require("./Config/db")
 const express = require("express")
-const cookie = require("cookie")
+const cookieParser = require("cookie-parser");
 
-const Products = require("./Models/productSchema")
+// const Products = require("./Models/productSchema")
 
 // const DefaultData = require("./defaultdata")
 
@@ -14,6 +14,7 @@ const router= require("./Routes/router");
 app.use(express.json());
 app.use(cors());
 app.use(router);
+app.use(cookieParser(""));
 
 
 

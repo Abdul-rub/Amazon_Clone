@@ -5,6 +5,7 @@ const keysecret = process.env.SECRET_KEY;
 const authenicate = async(req,res,next)=>{
     try {
         const token = req.cookie.Amazoncookie;
+        console.log(token)
         
         const verifyToken = jwt.verify(token,keysecret);
      
